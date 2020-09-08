@@ -23,8 +23,9 @@ def df_to_label_list(y_df):
     '''
     tag_list = []
     for index, row in y_df.iterrows():
+        #print([index for index, val in row.iteritems()])
         tag_list.append({ 'filename': row['audio_filename'],
-                         'tags': [index if val!='audio_filename' and val>0.5 for index, val in row.iteritems()] })
+                         'tags': [index for index, val in row.iteritems() if (index!='audio_filename' and float(val)>0.5)] })
     return tag_list
 
 
@@ -402,12 +403,18 @@ def evaluate(prediction_path, annotation_path, yaml_path, mode):
         # Store DataFrame in the dictionary.
         df_dict[coarse_id] = eval_df
     #using SED_EVAL tagging metrics:
-    estimated_tag_probabilities = dcase_util.containers.ProbabilityContainer(df_to_probability_list(restricted_pred_df)
-    estimated_tag_list = dcase_util.containers.MetaDataContainer(df_to_label_list(restricted_pred_df))
-    reference_tag_list = dcase_util.containers.MetaDataContainer(df_to_label_list(restricted_gt_df))
-    tag_evaluator = sed_eval.audio_tag.AudioTaggingMetrics(tags=columns)
+    #columns2 = columns
+    #columns2.append('audio_filename')
+    for col in pred_df.columns:
+        print(col)
+    estimated_tag_probabilities = dcase_util.containers.ProbabilityContainer(df_to_probability_list(pred_df))
+    estimated_tag_list = dcase_util.containers.MetaDataContainer(df_to_label_list(pred_df))
+    reference_tag_list = dcase_util.containers.MetaDataContainer(df_to_label_list(gt_df[pred_df.columns]))
+    tag_evaluator = sed_eval.audio_tag.AudioTaggingMetrics(tags = pred_df.columns)
     tag_evaluator.evaluate(reference_tag_list=reference_tag_list, estimated_tag_list=estimated_tag_list)
-    print(tag_evaluator)
+    print(tag_evaluator.result_report_class_wise())
+    result_df = pd.DataFrame(tag_evaluator.results())
+    result_df.to_csv('../results_'+mode+'.csv')
 
     # Return dictionary.
     return df_dict
