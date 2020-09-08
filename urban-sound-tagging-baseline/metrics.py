@@ -3,6 +3,29 @@ import oyaml as yaml
 import pandas as pd
 from sklearn.metrics import auc, confusion_matrix
 import warnings
+import sed_eval
+import dcase_util
+
+def df_to_probability_list(y_df):
+    '''
+    converts pred df to probability list for SED_EVAL metrics
+    '''
+    tag_list = []
+    for index, row in y_df.iterrows():
+        for index, val  in row.iteritems():
+            if index!='audio_filename':
+                tag_list.append({ 'filename': row['audio_filename'], 'label': index, 'probability': val })
+    return tag_list
+
+def df_to_label_list(y_df):
+    '''
+    converts pred df to list of dictionaries for SED_EVAL metrics
+    '''
+    tag_list = []
+    for index, row in y_df.iterrows():
+        tag_list.append({ 'filename': row['audio_filename'],
+                         'tags':  })
+    return tag_list
 
 
 def confusion_matrix_fine(
@@ -378,6 +401,13 @@ def evaluate(prediction_path, annotation_path, yaml_path, mode):
 
         # Store DataFrame in the dictionary.
         df_dict[coarse_id] = eval_df
+    #using SED_EVAL tagging metrics:
+    estimated_tag_probabilities = dcase_util.containers.ProbabilityContainer(df_to_probability_list(restricted_pred_df)
+    estimated_tag_list = dcase_util.containers.MetaDataContainer(df_to_label_list(restricted_pred_df))
+    reference_tag_list = dcase_util.containers.MetaDataContainer(df_to_label_list(restricted_gt_df))
+    tag_evaluator = sed_eval.audio_tag.AudioTaggingMetrics(tags=columns)
+    tag_evaluator.evaluate(reference_tag_list=reference_tag_list, estimated_tag_list=estimated_tag_list)
+    print(tag_evaluator)
 
     # Return dictionary.
     return df_dict
