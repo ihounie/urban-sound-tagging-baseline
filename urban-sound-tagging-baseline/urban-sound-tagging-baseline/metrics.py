@@ -3,8 +3,96 @@ import oyaml as yaml
 import pandas as pd
 from sklearn.metrics import auc, confusion_matrix
 import warnings
+import sed_eval
+import dcase_util
 
+ust_classes = ["1-1_small-sounding-engine_presence",
+"1-2_medium-sounding-engine_presence",
+"1-3_large-sounding-engine_presence",
+"1-X_engine-of-uncertain-size_presence",
+"2-1_rock-drill_presence",
+"2-2_jackhammer_presence",
+"2-3_hoe-ram_presence",
+"2-4_pile-driver_presence",
+"2-X_other-unknown-impact-machinery_presence",
+"3-1_non-machinery-impact_presence	4-1_chainsaw_presence",
+"4-2_small-medium-rotating-saw_presence",
+"4-3_large-rotating-saw_presence",
+"4-X_other-unknown-powered-saw_presence",
+"5-1_car-horn_presence",
+"5-2_car-alarm_presence",
+"5-3_siren_presence",
+"5-4_reverse-beeper_presence",
+"5-X_other-unknown-alert-signal_presence",
+"6-1_stationary-music_presence",
+"6-2_mobile-music_presence",
+"6-3_ice-cream-truck_presence",
+"6-X_music-from-uncertain-source_presence",
+"7-1_person-or-small-group-talking_presence",
+"7-2_person-or-small-group-shouting_presence",
+"7-3_large-crowd_presence",
+"7-4_amplified-speech_presence",
+"7-X_other-unknown-human-voice_presence",
+"8-1_dog-barking-whining_presence",
+"1-1_small-sounding-engine_proximity",
+"1-2_medium-sounding-engine_proximity",
+"1-3_large-sounding-engine_proximity",
+"1-X_engine-of-uncertain-size_proximity",
+"2-1_rock-drill_proximity",
+"2-2_jackhammer_proximity",
+"2-3_hoe-ram_proximity",
+"2-4_pile-driver_proximity"
+"2-X_other-unknown-impact-machinery_proximity",
+"3-1_non-machinery-impact_proximity",
+"4-1_chainsaw_proximity",
+"4-2_small-medium-rotating-saw_proximity",
+"4-3_large-rotating-saw_proximity",
+"4-X_other-unknown-powered-saw_proximity",
+"5-1_car-horn_proximity",
+"5-2_car-alarm_proximity",
+"5-3_siren_proximity",
+"5-4_reverse-beeper_proximity",
+"5-X_other-unknown-alert-signal_proximity",
+"6-1_stationary-music_proximity",
+"6-2_mobile-music_proximity",
+"6-3_ice-cream-truck_proximity",
+"6-X_music-from-uncertain-source_proximity",
+"7-1_person-or-small-group-talking_proximity",
+"7-2_person-or-small-group-shouting_proximity",
+"7-3_large-crowd_proximity",
+"7-4_amplified-speech_proximity",
+"7-X_other-unknown-human-voice_proximity",
+"8-1_dog-barking-whining_proximity",
+"1_engine_presence",
+"2_machinery-impact_presence",
+"3_non-machinery-impact_presence",
+"4_powered-saw_presence",
+"5_alert-signal_presence",
+"6_music_presence",
+"7_human-voice_presence",
+"8_dog_presence"]
 
+def df_to_probability_list(y_df):
+    '''
+    converts pred df to probability list for SED_EVAL metrics
+    '''
+    tag_list = []
+    for index, row in y_df.iterrows():
+        for index, val  in row.iteritems():
+            if index!='audio_filename':
+                tag_list.append({ 'filename': row['audio_filename'], 'label': index, 'probability': val })
+    return tag_list
+
+def df_to_label_list(y_df):
+    '''
+    converts pred df to list of dictionaries for SED_EVAL metrics
+    '''
+    tag_list = []
+    for index, row in y_df.iterrows():
+        tag_list.append({ 'filename': row['audio_filename'],
+                         'tags':  })
+    return tag_list
+         
 def confusion_matrix_fine(
         Y_true, Y_pred, is_true_incomplete, is_pred_incomplete):
     """
@@ -378,6 +466,15 @@ def evaluate(prediction_path, annotation_path, yaml_path, mode):
 
         # Store DataFrame in the dictionary.
         df_dict[coarse_id] = eval_df
+        
+    #using SED_EVAL tagging metrics:
+    estimated_tag_probabilities = dcase_util.containers.ProbabilityContainer(df_to_probability_list(restricted_pred_df)
+    estimated_tag_list = dcase_util.containers.MetaDataContainer(df_to_label_list(restricted_pred_df))
+    reference_tag_list = dcase_util.containers.MetaDataContainer(df_to_label_list(restricted_gt_df))
+    tag_evaluator = sed_eval.audio_tag.AudioTaggingMetrics(tags=columns)
+    tag_evaluator.evaluate(reference_tag_list=reference_tag_list, estimated_tag_list=estimated_tag_list)
+    print(tag_evaluator)
+        
 
     # Return dictionary.
     return df_dict
