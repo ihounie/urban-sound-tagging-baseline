@@ -24,7 +24,7 @@ def df_to_label_list(y_df):
     tag_list = []
     for index, row in y_df.iterrows():
         tag_list.append({ 'filename': row['audio_filename'],
-                         'tags':  })
+                         'tags': [index if val!='audio_filename' and val>0.5 for index, val in row.iteritems()] })
     return tag_list
 
 
