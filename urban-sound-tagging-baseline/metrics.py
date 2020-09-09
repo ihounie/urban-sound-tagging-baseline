@@ -5,6 +5,7 @@ from sklearn.metrics import auc, confusion_matrix
 import warnings
 import sed_eval
 import dcase_util
+import json
 
 def df_to_probability_list(y_df):
     '''
@@ -413,8 +414,11 @@ def evaluate(prediction_path, annotation_path, yaml_path, mode):
     tag_evaluator = sed_eval.audio_tag.AudioTaggingMetrics(tags = pred_df.columns)
     tag_evaluator.evaluate(reference_tag_list=reference_tag_list, estimated_tag_list=estimated_tag_list)
     print(tag_evaluator.result_report_class_wise())
+    results_dict = tag_evaluator.results()
     result_df = pd.DataFrame(tag_evaluator.results())
-    result_df.to_csv('../results_'+mode+'.csv')
+    result_df.to_csv('../output/results_'+mode+'.csv')
+    with open('../output/results_'+mode+'.json', 'w') as fp:
+        json.dump(results_dict, fp)
 
     # Return dictionary.
     return df_dict

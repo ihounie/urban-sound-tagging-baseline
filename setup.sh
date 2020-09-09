@@ -3,10 +3,10 @@
 # Create environment
 #conda create -n sonyc-ust python=3.6 -y
 #source activate sonyc-ust
-
+export SONYC_UST_PATH=~/sonyc-ust
 # Install dependencies
 yes | pip3 install -r requirements.txt
-
+pip3 install comet_ml
 # Download VGGish model files
 mkdir -p ~/vggish
 pushd ~/vggish
