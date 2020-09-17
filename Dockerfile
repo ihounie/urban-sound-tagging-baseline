@@ -17,7 +17,7 @@ RUN apt-get install -y  libsndfile1 libsndfile1-dev
 ### audio converters
 RUN apt update && apt-get install -y ffmpeg mpg123
 ### sox package to adjust sample rate.
-RUN apt-get install -y libsox-fmt-all libsox-dev sox
+RUN apt-get install -y libsox-fmt-all libsox-dev sox llvm
 
 RUN apt-get install -y tmux
 RUN pip3 install jupyter notebook
