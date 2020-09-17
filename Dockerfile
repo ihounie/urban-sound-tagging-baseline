@@ -13,24 +13,24 @@ RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
-RUN apt-get install libsndfile1 libsndfile1-dev
+RUN apt-get install -y  libsndfile1 libsndfile1-dev
 ### audio converters
 RUN apt update && apt-get install ffmpeg mpg123
 ### sox package to adjust sample rate.
-RUN apt-get install libsox-fmt-all libsox-dev sox
+RUN apt-get install -y libsox-fmt-all libsox-dev sox
 
-RUN apt-get install tmux
+RUN apt-get install -y tmux
 RUN pip3 install jupyter notebook
 RUN pip3 install sed_eval
 RUN cd ~/ && git clone https://github.com/ihounie/urban-sound-tagging-baseline.git
 RUN cd ~/urban-sound-tagging-baseline && ./setup.sh
 RUN pip3 install comet_ml
-RUN apt-get install vim
+RUN apt-get install -y vim
 RUN apt-get install -y libsndfile1 libsndfile1-dev libsox-fmt-all libsox-dev sox
 # Install Tensorflow with GPU support
 RUN pip3 install --yes tensorflow-gpu==1.13.1
 # (Optional) install Jupiter notebooks to run examples
-RUN pip3 install notebook
+RUN pip3 install --yes notebook
 
 ENTRYPOINT [ "/bin/bash"]
 CMD [ "/bin/bash" ]
