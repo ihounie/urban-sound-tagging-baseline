@@ -37,9 +37,9 @@ RUN pip3 install comet_ml
 RUN apt-get install -y vim
 RUN apt-get install -y libsndfile1 libsndfile1-dev libsox-fmt-all libsox-dev sox
 # Install Tensorflow with GPU support
-RUN pip3 install --yes tensorflow-gpu==1.13.1
+RUN yes | pip3 install tensorflow-gpu==1.13.1
 # (Optional) install Jupiter notebooks to run examples
-RUN pip3 install --yes notebook
+RUN yes | pip3 install notebook
 
 ENTRYPOINT [ "/bin/bash"]
 CMD [ "/bin/bash" ]
