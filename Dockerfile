@@ -17,10 +17,12 @@ RUN apt-get install -y  libsndfile1 libsndfile1-dev
 ### audio converters
 RUN apt update && apt-get install -y ffmpeg mpg123
 ### sox package to adjust sample rate.
-RUN apt-get install -y libsox-fmt-all libsox-dev sox llvm
+RUN apt-get install -y libsox-fmt-all libsox-dev sox
 
 RUN apt-get install -y tmux
 RUN pip3 install jupyter notebook
+RUN conda install -c anaconda llvm
+RUN conda install -c numba llvmlite
 RUN pip3 install sed_eval
 RUN cd ~/ && git clone https://github.com/ihounie/urban-sound-tagging-baseline.git
 RUN cd ~/urban-sound-tagging-baseline && ./setup.sh
