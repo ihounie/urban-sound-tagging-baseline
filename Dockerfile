@@ -41,5 +41,6 @@ RUN yes | pip3 install tensorflow-gpu==1.13.1
 # (Optional) install Jupiter notebooks to run examples
 RUN yes | pip3 install notebook
 
-ENTRYPOINT [ "/bin/bash"]
-CMD [ "/bin/bash" ]
+ENTRYPOINT [ "/bin/bash",  "-l", "-c"]
+CMD [ "/bin/bash",  "-l", "-c" ]
+
