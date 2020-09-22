@@ -40,7 +40,7 @@ RUN apt-get install -y libsndfile1 libsndfile1-dev libsox-fmt-all libsox-dev sox
 RUN yes | pip3 install tensorflow-gpu==1.13.1
 # (Optional) install Jupiter notebooks to run examples
 RUN yes | pip3 install notebook
-
+RUN yes | pip3 install numpy==1.16.2 keras==2.2.4 tensorflow==1.13.1 scikit-learn==0.20.3 oyaml==0.7 tqdm==4.31.1 pandas==0.24.1 resampy==0.2.1
 ENTRYPOINT [ "/bin/bash",  "-l", "-c"]
 CMD [ "/bin/bash",  "-l", "-c" ]
 
