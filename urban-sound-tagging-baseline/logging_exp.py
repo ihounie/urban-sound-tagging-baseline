@@ -31,7 +31,7 @@ class experiment_logger:
         
         stop: end logging and close connection
     '''
-    def __init__(self, log_backend='comet', project_name='idm-ust'):
+    def __init__(self, log_backend='comet', project_name='baseline'):
         '''
 
         Parameters
@@ -57,8 +57,8 @@ class experiment_logger:
             print("logging experiments on neptune project "+project_name)
             neptune.create_experiment()
         if self.comet:
-            self.comet_experiment = Experiment(api_key="ev1VO91pYFVRukLChujjpCdmI",
-                            project_name=project_name, workspace="ihounie")
+            self.comet_experiment = Experiment(api_key="SOQxrUYgd2VF6rXsbowmRtDRw",
+                            project_name=project_name, workspace="mosmo")
             print("logging experiments on comet project "+project_name)
     
     def add_params(self, params, step=None ):

@@ -1,5 +1,7 @@
+from logging_exp import experiment_logger
 import argparse
 from metrics import evaluate, micro_averaged_auprc, macro_averaged_auprc
+
 
 
 if __name__ == '__main__':
@@ -15,16 +17,22 @@ if __name__ == '__main__':
                         help='Path to dataset annotation CSV file.')
     parser.add_argument('yaml_path', type=str,
                         help='Path to dataset taxonomy YAML file.')
+    parser.add_argument('model_name', type=str,
+                        help='Model name for comet logging.')
+    parser.add_argument('dataset', type=str,
+                        help='Model name for comet logging.')
 
     args = parser.parse_args()
+    logger = experiment_logger()
+    logger.add_params({'model': args.model_name, 'dataset': args.dataset})
 
     for mode in ("fine", "coarse"):
 
         df_dict = evaluate(args.prediction_path,
                            args.annotation_path,
                            args.yaml_path,
-                           mode)
-
+                           mode, logger=logger)
+        
         micro_auprc, eval_df = micro_averaged_auprc(df_dict, return_df=True)
         macro_auprc, class_auprc = macro_averaged_auprc(df_dict, return_classwise=True)
 
@@ -40,4 +48,5 @@ if __name__ == '__main__':
 
         for coarse_id, auprc in class_auprc.items():
             print("      - {}: {}".format(coarse_id, auprc))
+            logger.log_metrics(f"AUPRC_{mode}_{coarse_id}", auprc)
 

@@ -164,7 +164,7 @@ def softmax(X, theta=1.0, axis=None):
 
 
 def construct_mlp_framewise(emb_size, num_classes, hidden_layer_size=128,
-                            num_hidden_layers=2, l2_reg=1e-5):
+                            num_hidden_layers=0, l2_reg=1e-5):
     """
     Construct a 2-hidden-layer MLP model for framewise processing
 
@@ -325,10 +325,10 @@ def train_model(model, X_train, y_train, X_valid, y_valid, output_dir,
 
 ## MODEL TRAINING
 
-def train_framewise(annotation_path, taxonomy_path, emb_dir, output_dir, exp_id,
+def train_framewise(annotation_path, taxonomy_path, emb_dir, output_dir, exp_id, weights,
                     label_mode="fine", batch_size=64, num_epochs=100,
                     patience=20, learning_rate=1e-4, hidden_layer_size=128,
-                    num_hidden_layers=2, l2_reg=1e-5, standardize=True,
+                    num_hidden_layers=0, l2_reg=1e-5, standardize=True,
                     timestamp=None):
     """
     Train and evaluate a framewise MLP model.
@@ -399,7 +399,7 @@ def train_framewise(annotation_path, taxonomy_path, emb_dir, output_dir, exp_id,
 
     model = construct_mlp_framewise(emb_size, num_classes,
                                     hidden_layer_size=hidden_layer_size,
-                                    num_hidden_layers=2,#num_hidden_layers,
+                                    num_hidden_layers=num_hidden_layers,
                                     l2_reg=l2_reg)
 
     if not timestamp:
@@ -463,9 +463,26 @@ def train_framewise(annotation_path, taxonomy_path, emb_dir, output_dir, exp_id,
         loss_func = masked_loss
     else:
         loss_func = None
-
+    ################################################
+    #FINE TUNING
+    ###################################################
+    print("* Loading Weights")
+    model.load_weights(weights, by_name=True)
+    print("* Cutting source model")
+    last_layer = model.layers[-2]
+    model_cut = Model(model.input, last_layer.output, name='source_model')
+    input_shape = model.layers[0].output_shape[1:]
+    print("* Adding new final layer")
+    x = Input(shape=input_shape, dtype='float32', name='input')
+    y = model_cut(x)
+    y = Dense(128, activation='relu', name='new_dense_layer_0')(y)
+    y = Dense(num_classes, activation='sigmoid', name='new_output_layer')(y)
+    new_model = Model(x, y)
+    print("* Freezing source model")
+    new_model.get_layer('source_model').trainable = False
+    
     print("* Training model.")
-    history = train_model(model, X_train, y_train, X_valid, y_valid,
+    history = train_model(new_model, X_train, y_train, X_valid, y_valid,
                           results_dir, loss=loss_func, batch_size=batch_size,
                           num_epochs=num_epochs, patience=patience,
                           learning_rate=learning_rate)
@@ -615,6 +632,7 @@ if __name__ == '__main__':
     parser.add_argument("emb_dir", type=str)
     parser.add_argument("output_dir", type=str)
     parser.add_argument("exp_id", type=str)
+    parser.add_argument("weights", type=str)
 
     parser.add_argument("--hidden_layer_size", type=int, default=128)
     parser.add_argument("--num_hidden_layers", type=int, default=2)
@@ -642,6 +660,7 @@ if __name__ == '__main__':
                     args.emb_dir,
                     args.output_dir,
                     args.exp_id,
+                    args.weights,
                     label_mode=args.label_mode,
                     batch_size=args.batch_size,
                     num_epochs=args.num_epochs,

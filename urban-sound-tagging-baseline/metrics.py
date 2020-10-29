@@ -1,3 +1,4 @@
+from logging_exp import experiment_logger
 import numpy as np
 import oyaml as yaml
 import pandas as pd
@@ -253,7 +254,7 @@ def confusion_matrix_coarse(y_true, y_pred):
     return TP, FP, FN
 
 
-def evaluate(prediction_path, annotation_path, yaml_path, mode):
+def evaluate(prediction_path, annotation_path, yaml_path, mode, logger=None):
     # Set minimum threshold.
     min_threshold = 0.01
 
@@ -416,6 +417,11 @@ def evaluate(prediction_path, annotation_path, yaml_path, mode):
     print(tag_evaluator.result_report_class_wise())
     results_dict = tag_evaluator.results()
     result_df = pd.DataFrame(tag_evaluator.results())
+    if logger:
+        for k in results_dict['class_wise']:
+            for key, val in results_dict['class_wise'][k].items():
+                for t, metric in val.items():
+                    logger.log_metrics(f"{k}_{t}", metric)
     result_df.to_csv('../output/results_'+mode+'.csv')
     with open('../output/results_'+mode+'.json', 'w') as fp:
         json.dump(results_dict, fp)
