@@ -1,6 +1,9 @@
-# DCASE 2019 Challenge: Task 5 - Urban Sound Tagging
+# MAVD-UST baseline
 
-This repository contains code to reproduce the baseline results and evaluate system outputs for [Task 5 (Urban Sound Tagging)](http://dcase.community/challenge2019/task-urban-sound-tagging) of the the [DCASE 2019 Challenge](http://dcase.community/challenge2019). We encourage participants to use this code as a starting point for manipulating the dataset and for evaluating their system outputs.
+
+This repository is based on the code to reproduce the baseline results and evaluate system outputs for [Task 5 (Urban Sound Tagging)](http://dcase.community/challenge2019/task-urban-sound-tagging) of the the [DCASE 2019 Challenge](http://dcase.community/challenge2019). 
+
+Scripts to run and test systems are provided.
 
 ## Installation
 You'll need [Python 3](https://www.python.org/download/releases/3.0/) and [Anaconda](https://www.anaconda.com/distribution/) installed, and will need a bash terminal environment.
@@ -66,7 +69,7 @@ popd
 Your environment is now set up!
 
 
-## Replicating baseline
+## Replicating Results and Running experiments
 ### Quick Start
 
 To get started immediately (assuming you've set up your environment), you can just run:
@@ -77,55 +80,26 @@ export SONYC_UST_PATH=~/sonyc-ust
 ./baseline_example.sh
 ```
 
-### Baseline Guide
+### Generating data
+TODO: Add argument parsing for database paths, and  implement Database checks and downloads without requiring DCASE-models package.
 
-First, activate your conda environment (if it isn't already activated).
-
+#### MAVD-UST
 ```shell
-source activate sonyc-ust
+python gen_mavd_ust_3.py
+```
+#### SONYC-MAVD
+First generate MAVD-UST, then run:
+```shell
+python merge2.py
 ```
 
-Then, set up some environment variables to make things easier. Feel free to change these to a directory that works better for you.
+### Baseline Scripts
 
-```shell
-export SONYC_UST_PATH=~/sonyc-ust
-```
-
-Enter the source code directory within the repository:
-
-```shell
-cd urban-sound-tagging-baseline
-```
-
-Extract embeddings from the SONYC-UST data:
-
-```shell
-python extract_embedding.py $SONYC_UST_PATH/data/annotations.csv $SONYC_UST_PATH/data $SONYC_UST_PATH/features $SONYC_UST_PATH/vggish
-```
-
-Now, train a fine-level model and produce predictions:
-
-```shell
-python classify.py $SONYC_UST_PATH/data/annotations.csv $SONYC_UST_PATH/data/dcase-ust-taxonomy.yaml $SONYC_UST_PATH/features/vggish $SONYC_UST_PATH/output baseline_fine --label_mode fine
-```
-
-Evaluate the fine-level model output file (using frame-averaged clip predictions) on AUPRC:
-
-```shell
-python evaluate_predictions.py $SONYC_UST_PATH/output/baseline_fine/*/output_mean.csv $SONYC_UST_PATH/data/annotations.csv $SONYC_UST_PATH/data/dcase-ust-taxonomy.yaml
-```
-
-Now, train a coarse-level model and produce predictions:
-
-```shell
-python classify.py $SONYC_UST_PATH/data/annotations.csv $SONYC_UST_PATH/data/dcase-ust-taxonomy.yaml $SONYC_UST_PATH/features/vggish $SONYC_UST_PATH/output baseline_coarse --label_mode coarse
-```
-
-Evaluate the coarse-level model output file (using frame-averaged clip predictions) on AUPRC:
-
-```shell
-python evaluate_predictions.py $SONYC_UST_PATH/output/baseline_coarse/*/output_mean.csv $SONYC_UST_PATH/data/annotations.csv $SONYC_UST_PATH/data/dcase-ust-taxonomy.yaml
-```
+Three scripts are provided:
+* `baseline_sonyc_mavd.sh` Trains on Sonyc
+* `baseline_mavd_ust.sh` Trains on MAVD
+* `baseline_sonyc_mavd_fine_tune.sh` Trains on Sonyc and Fine-tunes on MAVD.
+All evaluate on MAVD.
 
 ## Baseline Description
 
