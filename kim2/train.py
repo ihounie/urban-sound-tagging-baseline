@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import oyaml as yaml
 from collections import OrderedDict
+from sklearn.model_selection import train_test_split
 
 from urban_sound_tagging_baseline.classify import get_file_targets, get_subset_split, generate_output_file
 from urban_sound_tagging_baseline.metrics import evaluate, micro_averaged_auprc, macro_averaged_auprc
@@ -77,17 +78,7 @@ def prepare_data(train_file_idxs, test_file_idxs, mel_list,
 	X_train = np.array(X_train)[train_idxs]
 	y_train = np.array(y_train)[train_idxs]
 
-	X_valid = []
-	y_valid = []
-	for idx in test_file_idxs:
-
-		X_valid.append(mel_list[idx])
-
-		y_valid.append(target_list[idx])
-
-	test_idxs = np.random.permutation(len(X_valid))
-	X_valid = np.array(X_valid)[test_idxs]
-	y_valid = np.array(y_valid)[test_idxs]
+	X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, test_size=0.2, random_state=0)
 
 	return X_train, y_train, X_valid, y_valid
 

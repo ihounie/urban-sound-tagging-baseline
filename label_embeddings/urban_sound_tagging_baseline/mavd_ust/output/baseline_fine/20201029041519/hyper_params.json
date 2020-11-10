@@ -1,0 +1,16 @@
+{
+  "annotation_path": "./mavd_ust/data/annotations.csv",
+  "taxonomy_path": "./mavd_ust/data/dcase-ust-taxonomy.yaml",
+  "emb_dir": "./mavd_ust/features/vggish",
+  "output_dir": "./mavd_ust/output",
+  "exp_id": "baseline_fine",
+  "hidden_layer_size": 128,
+  "num_hidden_layers": 0,
+  "learning_rate": 0.001,
+  "l2_reg": 1e-05,
+  "batch_size": 64,
+  "num_epochs": 100,
+  "patience": 20,
+  "no_standardize": false,
+  "label_mode": "fine"
+}

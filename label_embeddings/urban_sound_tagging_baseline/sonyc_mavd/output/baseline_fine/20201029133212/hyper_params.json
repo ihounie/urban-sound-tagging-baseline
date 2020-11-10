@@ -1,0 +1,16 @@
+{
+  "annotation_path": "./sonyc_mavd/data/annotations.csv",
+  "taxonomy_path": "./sonyc_mavd/data/dcase-ust-taxonomy.yaml",
+  "emb_dir": "./sonyc_mavd/features/vggish",
+  "output_dir": "./sonyc_mavd/output",
+  "exp_id": "baseline_fine",
+  "hidden_layer_size": 128,
+  "num_hidden_layers": 0,
+  "learning_rate": 0.001,
+  "l2_reg": 1e-05,
+  "batch_size": 64,
+  "num_epochs": 100,
+  "patience": 20,
+  "no_standardize": false,
+  "label_mode": "fine"
+}

@@ -1,0 +1,8 @@
+Requirement already up-to-date: plotly in /usr/local/lib/python3.6/dist-packages
+Requirement already up-to-date: retrying>=1.3.3 in /usr/local/lib/python3.6/dist-packages (from plotly)
+Collecting six (from plotly)
+  Downloading https://files.pythonhosted.org/packages/ee/ff/48bde5c0f013094d729fe4b0316ba2a24774b3ff1c52d924a8a4cb04078a/six-1.15.0-py2.py3-none-any.whl
+Installing collected packages: six
+  Found existing installation: six 1.11.0
+    Not uninstalling six at /usr/lib/python3/dist-packages, outside environment /usr
+Successfully installed six-1.15.0
