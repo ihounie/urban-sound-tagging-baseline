@@ -21,7 +21,9 @@ Alternatively, a Dockerfile is also provided.
 We need two datasets to reproduce all the experiments:
 * MAVD original dataset
 * sonyc-ust original dataset
+
 In addition, two datasets will be created from the former:
+
 * mavd-ust: sonyc format version of mavd
 * sonyc-mavd: combined dataset (for transfer learning approaches).
 
