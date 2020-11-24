@@ -25,6 +25,7 @@ In addition, two datasets will be created from the former:
 * mavd-ust: sonyc format version of mavd
 * sonyc-mavd: combined dataset (for transfer learning approaches).
 
+
 ### Export Paths to data
 You'll need to store the datasets' path in local variables, which will be used by (most) scripts.
 ```shell
@@ -66,8 +67,17 @@ On the folder `scripts/` the following experiments can be run:
 * `run_kim.sh` Trains kim's model on MAVD
 * `run_rf.sh` Trains random forests on MAVD
 * `run_le.sh` Trains random forests with label embeddings on MAVD 
-All evaluate on MAVD.
-Results are printed on the command line and uploaded to 
+
+All systems are evaluated on MAVD.
+
+Results are printed on the command line and uploaded to [comet](https://www.comet.ml/mosmo/baseline).
+
+### Dataset Stats:
+The folder `data_generation` contains two python scripts to plot dataset class statistics:
+* `sonyc-ust-statss.py` (TO-DO: fix typo) can be used to extract info from sonyc format datasets
+* `mavd_stats.py` can be used to extract info from MAVD
+
+Plots are stored on `figures`.
 
 ## Baseline Description
 
