@@ -1,105 +1,73 @@
 # MAVD-UST baseline
 
 
-This repository is based on the code to reproduce the baseline results and evaluate system outputs for [Task 5 (Urban Sound Tagging)](http://dcase.community/challenge2019/task-urban-sound-tagging) of the the [DCASE 2019 Challenge](http://dcase.community/challenge2019). 
+This repository is based on the code to reproduce the baseline results and evaluate system outputs for [Task 5 (Urban Sound Tagging)](http://dcase.community/challenge2019/task-urban-sound-tagging) of the the [DCASE 2019 Challenge](http://dcase.community/challenge2019), 
+and Bongjum Kim's [submission code] 
 
 Scripts to run and test systems are provided.
 
 ## Installation
-You'll need [Python 3](https://www.python.org/download/releases/3.0/) and [Anaconda](https://www.anaconda.com/distribution/) installed, and will need a bash terminal environment.
 
 Before doing anything else, clone this repository and enter it:
 
 ```shell
 git clone https://github.com/sonyc-project/urban-sound-tagging-baseline.git
 cd urban-sound-tagging-baseline
-```
-
-### Quick Start
-
-To get started quickly, simply run:
-
-```shell
-# Replace with your preferred directory:
-export SONYC_UST_PATH=~/sonyc-ust
 ./setup.sh
 ```
+Alternatively, a Dockerfile is also provided.
 
-### Setup Guide
+## Datasets:
+We need two datasets to reproduce all the experiments:
+* MAVD original dataset
+* sonyc-ust original dataset
+In addition, two datasets will be created from the former:
+* mavd-ust: sonyc format version of mavd
+* sonyc-mavd: combined dataset (for transfer learning approaches).
 
-If you want to go through the motions of setting up the environment, you can follow this guide.
-
-First, set up some environment variables to make things easier for yourself. Feel free to change these to a directory that works better for you.
+### Export Paths to data
+You'll need to store the datasets' path in local variables, which will be used by (most) scripts.
+```shell
+export MAVD_UST_PATH=$(pwd)/datasets/mavd-ust
+export SONYC_UST_PATH=$(pwd)/datasets/sonyc-ust
+export MAVD_PATH=$(pwd)/datasets/MAVD
+export SONYC_MAVD_PATH=$(pwd)/datasets/sonyc-mavd
+```
+### Download data (if needed)
 
 ```shell
-export SONYC_UST_PATH=~/sonyc-ust
+cd scripts
+./download_data.sh
 ```
+### Generate new datasets
 
-Then set up your Python environment:
+From the folder scripts run the following script to generate `mavd-ust` and `sonyc-mavd`:
 
+#### MAVD-UST
 ```shell
-conda create -n sonyc-ust python=3.6
-source activate sonyc-ust
-pip install -r requirements.txt
+generate_mavd-ust.sh
 ```
-
-We're using [VGGish](https://github.com/tensorflow/models/tree/master/research/audioset) features as our input representation, so download the required model files:
-
+#### SONYC-MAVD
 ```shell
-mkdir -p $SONYC_UST_PATH/vggish
-pushd $SONYC_UST_PATH/vggish
-curl -O https://storage.googleapis.com/audioset/vggish_model.ckpt
-curl -O https://storage.googleapis.com/audioset/vggish_pca_params.npz
-popd
+generate_sonyc-mavd.sh
 ```
-
-Now, download the dataset from [Zenodo](https://zenodo.org/record/2590742) and decompress the audio files:
-```shell
-mkdir -p $SONYC_UST_PATH/data
-pushd $SONYC_UST_PATH/data
-wget https://zenodo.org/record/2590742/files/annotations.csv
-wget https://zenodo.org/record/2590742/files/audio.tar.gz
-wget https://zenodo.org/record/2590742/files/dcase-ust-taxonomy.yaml
-wget https://zenodo.org/record/2590742/files/README.md
-tar xf audio.tar.gz
-rm audio.tar.gz
-popd
-```
-
-Your environment is now set up!
-
 
 ## Replicating Results and Running experiments
 ### Quick Start
 
-To get started immediately (assuming you've set up your environment), you can just run:
 
-```shell
-# Replace with your preferred directory:
-export SONYC_UST_PATH=~/sonyc-ust
-./baseline_example.sh
-```
-
-### Generating data
-TODO: Add argument parsing for database paths, and  implement Database checks and downloads without requiring DCASE-models package.
-
-#### MAVD-UST
-```shell
-python gen_mavd_ust_3.py
-```
-#### SONYC-MAVD
-First generate MAVD-UST, then run:
-```shell
-python merge2.py
-```
 
 ### Baseline Scripts
 
-Three scripts are provided:
-* `baseline_sonyc_mavd.sh` Trains on Sonyc
-* `baseline_mavd_ust.sh` Trains on MAVD
-* `baseline_sonyc_mavd_fine_tune.sh` Trains on Sonyc and Fine-tunes on MAVD.
+On the folder `scripts/` the following experiments can be run:
+* `baseline_sonyc_mavd.sh` Trains Baseline on Sonyc
+* `baseline_mavd_ust.sh` Trains Baseline on MAVD
+* `baseline_sonyc_mavd_fine_tune.sh` Trains Baseline on Sonyc and Fine-tunes on MAVD.
+* `run_kim.sh` Trains kim's model on MAVD
+* `run_rf.sh` Trains random forests on MAVD
+* `run_le.sh` Trains random forests with label embeddings on MAVD 
 All evaluate on MAVD.
+Results are printed on the command line and uploaded to 
 
 ## Baseline Description
 
