@@ -2,7 +2,7 @@
 
 
 This repository is based on the code to reproduce the baseline results and evaluate system outputs for [Task 5 (Urban Sound Tagging)](http://dcase.community/challenge2019/task-urban-sound-tagging) of the the [DCASE 2019 Challenge](http://dcase.community/challenge2019), 
-and Bongjum Kim's [submission code] 
+and Bongjum Kim's [submission code](https://github.com/bongjun/dcase2019-task5).
 
 Scripts to run and test systems are provided.
 
