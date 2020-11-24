@@ -8,18 +8,7 @@ RUN apt-get update && \
     bzip2 libopenblas-dev pbzip2 libgl1-mesa-glx && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-RUN apt-get clean && apt-get update && apt-get install -y locales
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-RUN apt-get update --fix-missing &&     apt-get install -y wget bzip2 ca-certificates libglib2.0-0 libxext6 libsm6 libxrender1 git mercurial subversion &&     apt-get clean
-RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2020.02-Linux-x86_64.sh -O ~/anaconda.sh &&     /bin/bash ~/anaconda.sh -b -p /opt/conda &&     rm ~/anaconda.sh &&     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh &&     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc &&     echo "conda activate base" >> ~/.bashrc &&     find /opt/conda/ -follow -type f -name '*.a' -delete &&     find /opt/conda/ -follow -type f -name '*.js.map' -delete &&     /opt/conda/bin/conda clean --yes -afy
-ENV PATH=/opt/conda/bin:/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-RUN conda update -y conda
-RUN conda update --all
-RUN apt install --yes gcc
-RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
 RUN apt-get install -y  libsndfile1 libsndfile1-dev
 ### audio converters
 RUN apt update && apt-get install -y ffmpeg mpg123
@@ -39,9 +28,6 @@ RUN apt-get install -y libsndfile1 libsndfile1-dev libsox-fmt-all libsox-dev sox
 # Install Tensorflow with GPU support
 RUN yes | pip3 install tensorflow-gpu==1.13.1
 # (Optional) install Jupiter notebooks to run examples
-RUN yes | pip3 install notebook
-RUN yes | pip3 install numpy==1.16.2 keras==2.2.4 tensorflow==1.13.1 scikit-learn==0.20.3 oyaml==0.7 tqdm==4.31.1 pandas==0.24.1 resampy==0.2.1
-RUN conda install pandas
 ENTRYPOINT [ "/bin/bash",  "-l", "-c"]
 CMD [ "/bin/bash",  "-l", "-c" ]
 
